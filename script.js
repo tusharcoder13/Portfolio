@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== Typing Effect =====
     const typedEl = document.getElementById('typed-text');
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const words = ['Web Developer', 'Open Source Contributor', 'Tech Enthusiast', 'Problem Solver', 'Freelancer'];
+    const words = ['Web Developer', 'Android App Developer', 'Open Source Contributor', 'Tech Enthusiast', 'Problem Solver', 'Freelancer'];
     let wordIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -732,5 +732,26 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.style.background = '';
             btn.disabled = false;
         }, 3000);
+    });
+
+    // Project Filters
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.dataset.filter;
+
+            projectCards.forEach(card => {
+                if (filter === 'all' || card.dataset.category === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
     });
 });
