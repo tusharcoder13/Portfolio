@@ -568,12 +568,19 @@ body:hover .cursor-glow {
 
 .floating-tech {
     position: absolute;
-    inset: -60px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 1;
 }
 
 .float-item {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -16px;
+    margin-left: -35px;
     padding: 6px 14px;
     background: rgba(18, 18, 28, 0.9);
     border: 1px solid color-mix(in srgb, var(--color) 30%, transparent);
@@ -585,36 +592,37 @@ body:hover .cursor-glow {
     animation: orbit var(--dur, 6s) ease-in-out infinite;
     animation-delay: var(--delay);
     box-shadow: 0 0 15px color-mix(in srgb, var(--color) 10%, transparent);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
     will-change: transform;
 }
 
 .float-item:hover {
-    transform: scale(1.15);
     box-shadow: 0 0 25px color-mix(in srgb, var(--color) 30%, transparent);
     z-index: 10;
 }
 
 /* Position items in a circle around the orb */
-.float-item:nth-child(1)  { top: 0%;    left: 50%;  --dur: 5s; }
-.float-item:nth-child(2)  { top: 5%;    left: 70%;  --dur: 5.5s; }
-.float-item:nth-child(3)  { top: 17%;   left: 85%;  --dur: 6s; }
-.float-item:nth-child(4)  { top: 35%;   left: 95%;  --dur: 6.5s; }
-.float-item:nth-child(5)  { top: 55%;   left: 98%;  --dur: 5.2s; }
-.float-item:nth-child(6)  { top: 75%;   left: 90%;  --dur: 5.8s; }
-.float-item:nth-child(7)  { top: 90%;   left: 75%;  --dur: 6.2s; }
-.float-item:nth-child(8)  { top: 98%;   left: 55%;  --dur: 5.4s; }
-.float-item:nth-child(9)  { top: 95%;   left: 35%;  --dur: 6.3s; }
-.float-item:nth-child(10) { top: 85%;   left: 17%;  --dur: 5.7s; }
-.float-item:nth-child(11) { top: 70%;   left: 5%;   --dur: 6.1s; }
-.float-item:nth-child(12) { top: 50%;   left: 0%;   --dur: 5.3s; }
-.float-item:nth-child(13) { top: 30%;   left: 3%;   --dur: 5.9s; }
-.float-item:nth-child(14) { top: 12%;   left: 15%;  --dur: 5.6s; }
-.float-item:nth-child(15) { top: 3%;    left: 32%;  --dur: 5.1s; }
+.float-item:nth-child(1)  { --angle: 0deg;     --dur: 5s; }
+.float-item:nth-child(2)  { --angle: 21deg;    --dur: 5.5s; }
+.float-item:nth-child(3)  { --angle: 42deg;    --dur: 6s; }
+.float-item:nth-child(4)  { --angle: 64deg;    --dur: 6.5s; }
+.float-item:nth-child(5)  { --angle: 85deg;    --dur: 5.2s; }
+.float-item:nth-child(6)  { --angle: 106deg;   --dur: 5.8s; }
+.float-item:nth-child(7)  { --angle: 127deg;   --dur: 6.2s; }
+.float-item:nth-child(8)  { --angle: 148deg;   --dur: 5.4s; }
+.float-item:nth-child(9)  { --angle: 169deg;   --dur: 6.3s; }
+.float-item:nth-child(10) { --angle: 191deg;   --dur: 5.7s; }
+.float-item:nth-child(11) { --angle: 212deg;   --dur: 6.1s; }
+.float-item:nth-child(12) { --angle: 233deg;   --dur: 5.3s; }
+.float-item:nth-child(13) { --angle: 254deg;   --dur: 5.9s; }
+.float-item:nth-child(14) { --angle: 275deg;   --dur: 5.6s; }
+.float-item:nth-child(15) { --angle: 296deg;   --dur: 5.1s; }
+.float-item:nth-child(16) { --angle: 318deg;   --dur: 5.8s; }
+.float-item:nth-child(17) { --angle: 339deg;   --dur: 5.4s; }
 
 @keyframes orbit {
-    0%, 100% { transform: translateY(0px) translateX(var(--tx, 0)); }
-    50% { transform: translateY(-12px) translateX(var(--tx, 0)); }
+    0%, 100% { transform: rotate(var(--angle)) translateX(215px) rotate(calc(-1 * var(--angle))); }
+    50% { transform: rotate(var(--angle)) translateX(215px) translateY(-8px) rotate(calc(-1 * var(--angle))); }
 }
 
 /* Scroll Indicator */
@@ -2108,6 +2116,10 @@ a:focus-visible {
         animation: none !important;
         flex-direction: column;
         margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: -15px;
     }
 
     .hero-greeting,
@@ -2248,7 +2260,6 @@ a:focus-visible {
 
     .floating-tech {
         inset: 20px;
-        transform: translateX(-15px);
     }
 
     .float-item {
@@ -2256,6 +2267,10 @@ a:focus-visible {
         padding: 3px 8px;
         opacity: 1;
         text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+    @keyframes orbit {
+        0%, 100% { transform: rotate(var(--angle)) translateX(155px) rotate(calc(-1 * var(--angle))); }
+        50% { transform: rotate(var(--angle)) translateX(155px) translateY(-6px) rotate(calc(-1 * var(--angle))); }
     }
 
     .skills-grid {
@@ -2309,8 +2324,12 @@ a:focus-visible {
     .hero-orb { width: 150px; height: 150px; }
     .orb-core { font-size: 1.5rem; inset: 30px; }
 
-    .floating-tech { inset: 15px; }
+    .floating-tech { top: 0; left: 0; right: 0; bottom: 0; }
     .float-item { font-size: 0.48rem; padding: 2px 6px; }
+    @keyframes orbit {
+        0%, 100% { transform: rotate(var(--angle)) translateX(130px) rotate(calc(-1 * var(--angle))); }
+        50% { transform: rotate(var(--angle)) translateX(130px) translateY(-6px) rotate(calc(-1 * var(--angle))); }
+    }
 
     .skills-grid {
         grid-template-columns: 1fr 1fr;
