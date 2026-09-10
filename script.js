@@ -358,6 +358,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     typeEffect();
 
+    // ===== Role Rotation for About & Code sections =====
+    const aboutRoleEl = document.getElementById('about-role');
+    const codeRoleEl = document.getElementById('code-role');
+    const roles = ['Web Developer', 'Android Developer'];
+    let roleIndex = 0;
+
+    function rotateRoles() {
+        if (prefersReducedMotion) return;
+        roleIndex = (roleIndex + 1) % roles.length;
+        const newRole = roles[roleIndex];
+
+        if (aboutRoleEl) {
+            aboutRoleEl.style.opacity = '0';
+            aboutRoleEl.style.transform = 'translateY(-8px)';
+        }
+        if (codeRoleEl) {
+            codeRoleEl.style.opacity = '0';
+            codeRoleEl.style.transform = 'translateY(-8px)';
+        }
+
+        setTimeout(() => {
+            if (aboutRoleEl) aboutRoleEl.textContent = newRole;
+            if (codeRoleEl) codeRoleEl.textContent = newRole;
+
+            if (aboutRoleEl) {
+                aboutRoleEl.style.opacity = '1';
+                aboutRoleEl.style.transform = 'translateY(0)';
+            }
+            if (codeRoleEl) {
+                codeRoleEl.style.opacity = '1';
+                codeRoleEl.style.transform = 'translateY(0)';
+            }
+        }, 300);
+    }
+    setInterval(rotateRoles, 3000);
+
     // ===== Scroll Indicator Fade =====
     const scrollIndicator = document.querySelector('.scroll-indicator');
     if (scrollIndicator) {

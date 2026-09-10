@@ -881,6 +881,12 @@ body:hover .cursor-glow {
     font-weight: 600;
 }
 
+#about-role,
+#code-role {
+    display: inline-block;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 /* Code Block */
 .about-code {
     margin-top: 28px;
@@ -2212,8 +2218,6 @@ a:focus-visible {
     }
 
     .process-card { padding: 20px 16px; }
-
-    .about-code { display: none; }
 }
 
 @media (max-width: 480px) {
