@@ -5,19 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let loadProgress = 0;
 
     function updateLoader() {
-        loadProgress += Math.random() * 15 + 5;
+        loadProgress += Math.random() * 8 + 3;
         if (loadProgress > 100) loadProgress = 100;
         loaderBarFill.style.width = loadProgress + '%';
 
         if (loadProgress < 100) {
-            setTimeout(updateLoader, 100 + Math.random() * 200);
+            setTimeout(updateLoader, 80 + Math.random() * 120);
         } else {
             setTimeout(() => {
                 loader.classList.add('hidden');
                 document.body.style.overflow = '';
-                initAllAnimations();
-                initCounters();
-            }, 400);
+                setTimeout(() => {
+                    initAllAnimations();
+                    initCounters();
+                }, 300);
+            }, 500);
         }
     }
 
@@ -110,119 +112,122 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     let particles = [];
     let mouse = { x: null, y: null };
+    const isMobileDevice = window.innerWidth <= 768 || isTouch;
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            resizeCanvas();
-            initParticles();
-        }, 250);
-    });
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 0.5;
-            this.baseSize = this.size;
-            this.speedX = (Math.random() - 0.5) * 0.5;
-            this.speedY = (Math.random() - 0.5) * 0.5;
-            this.opacity = Math.random() * 0.5 + 0.1;
-            this.baseOpacity = this.opacity;
-            this.twinkleSpeed = Math.random() * 0.02 + 0.005;
-            this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
+    if (!isMobileDevice) {
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
+        resizeCanvas();
 
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            this.opacity += this.twinkleSpeed * this.twinkleDir;
-            if (this.opacity >= this.baseOpacity + 0.2 || this.opacity <= this.baseOpacity - 0.2) {
-                this.twinkleDir *= -1;
-            }
-
-            if (mouse.x !== null && mouse.y !== null) {
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < 120) {
-                    const force = (120 - dist) / 120;
-                    this.x -= dx * force * 0.02;
-                    this.y -= dy * force * 0.02;
-                    this.size = this.baseSize + force * 2;
-                    this.opacity = Math.min(1, this.baseOpacity + force * 0.5);
-                } else {
-                    this.size += (this.baseSize - this.size) * 0.1;
-                    this.opacity += (this.baseOpacity - this.opacity) * 0.1;
-                }
-            }
-
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-
-        draw() {
-            ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function initParticles() {
-        const count = Math.min(80, Math.floor(window.innerWidth / 15));
-        particles = [];
-        for (let i = 0; i < count; i++) {
-            particles.push(new Particle());
-        }
-    }
-    initParticles();
-
-    function connectParticles() {
-        const maxDist = 150;
-        const maxDistSq = maxDist * maxDist;
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distSq = dx * dx + dy * dy;
-
-                if (distSq < maxDistSq) {
-                    const dist = Math.sqrt(distSq);
-                    const opacity = (1 - dist / maxDist) * 0.15;
-                    ctx.strokeStyle = `rgba(99, 102, 241, ${opacity})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    function animateParticles() {
-        if (!particlesRafRunning) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            p.update();
-            p.draw();
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+                initParticles();
+            }, 250);
         });
-        connectParticles();
-        requestAnimationFrame(animateParticles);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.baseSize = this.size;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.baseOpacity = this.opacity;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+                this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                this.opacity += this.twinkleSpeed * this.twinkleDir;
+                if (this.opacity >= this.baseOpacity + 0.2 || this.opacity <= this.baseOpacity - 0.2) {
+                    this.twinkleDir *= -1;
+                }
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        const force = (120 - dist) / 120;
+                        this.x -= dx * force * 0.02;
+                        this.y -= dy * force * 0.02;
+                        this.size = this.baseSize + force * 2;
+                        this.opacity = Math.min(1, this.baseOpacity + force * 0.5);
+                    } else {
+                        this.size += (this.baseSize - this.size) * 0.1;
+                        this.opacity += (this.baseOpacity - this.opacity) * 0.1;
+                    }
+                }
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            const count = Math.min(80, Math.floor(window.innerWidth / 15));
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function connectParticles() {
+            const maxDist = 150;
+            const maxDistSq = maxDist * maxDist;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < maxDistSq) {
+                        const dist = Math.sqrt(distSq);
+                        const opacity = (1 - dist / maxDist) * 0.15;
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            if (!particlesRafRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
     }
-    animateParticles();
 
     // Page Visibility API - pause RAF loops when tab hidden
     document.addEventListener('visibilitychange', () => {
@@ -233,7 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cursorRafRunning = true;
             particlesRafRunning = true;
             if (!isTouch) animateCursorRing();
-            animateParticles();
+            if (!isMobileDevice) {
+                animateParticles();
+            }
         }
     });
 
@@ -382,9 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Scroll Animations =====
     function initAllAnimations() {
+        const isMobile = window.innerWidth <= 768;
         const observerOptions = {
-            threshold: 0.15,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: isMobile ? 0.05 : 0.15,
+            rootMargin: isMobile ? '0px 0px -20px 0px' : '0px 0px -50px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -401,15 +409,14 @@ document.addEventListener('DOMContentLoaded', () => {
             observer.observe(el);
         });
 
-        // Staggered animations for cards (desktop only)
-        if (window.innerWidth > 768) {
-            document.querySelectorAll('.projects-grid, .experience-timeline, .skills-grid, .process-grid').forEach(container => {
-                const children = container.children;
-                Array.from(children).forEach((child, i) => {
-                    child.style.transitionDelay = `${i * 0.15}s`;
-                });
+        // Staggered animations for cards
+        document.querySelectorAll('.projects-grid, .experience-timeline, .skills-grid, .process-grid').forEach(container => {
+            const children = container.children;
+            const staggerDelay = isMobile ? 0.06 : 0.15;
+            Array.from(children).forEach((child, i) => {
+                child.style.transitionDelay = `${i * staggerDelay}s`;
             });
-        }
+        });
 
         // Section Transitions
         const sectionObserver = new IntersectionObserver((entries) => {
@@ -419,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     sectionObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: isMobile ? 0.02 : 0.1 });
 
         document.querySelectorAll('.section').forEach(section => {
             sectionObserver.observe(section);
@@ -453,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     textObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: isMobile ? 0.2 : 0.5 });
 
         document.querySelectorAll('.reveal-text').forEach(el => {
             textObserver.observe(el);
@@ -513,6 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initCounters() {
+        const isMobile = window.innerWidth <= 768;
         const counterObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -521,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     counterObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: isMobile ? 0.1 : 0.5 });
 
         const statsSection = document.querySelector('.about-stats');
         if (statsSection) counterObserver.observe(statsSection);
@@ -532,7 +540,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (entry.isIntersecting) {
                     const card = entry.target;
                     const cardIndex = Array.from(card.parentNode.children).indexOf(card);
-                    card.style.transitionDelay = `${cardIndex * 0.06}s`;
+                    const delay = isMobile ? cardIndex * 0.04 : cardIndex * 0.06;
+                    card.style.transitionDelay = `${delay}s`;
                     setTimeout(() => {
                         card.classList.add('animated');
                         setTimeout(() => {
@@ -542,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     skillObserver.unobserve(card);
                 }
             });
-        }, { threshold: 0.2 });
+        }, { threshold: isMobile ? 0.05 : 0.2 });
 
         document.querySelectorAll('.skill-card').forEach(card => {
             skillObserver.observe(card);
